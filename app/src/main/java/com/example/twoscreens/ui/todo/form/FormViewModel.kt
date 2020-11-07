@@ -1,42 +1,42 @@
 package com.example.twoscreens.ui.todo.form
 
 import com.example.twoscreens.Event
+import com.example.twoscreens.R
 import com.example.twoscreens.StateEmitter
+import com.example.twoscreens.firebase.CreateTask
+import com.example.twoscreens.firebase.UpdateTask
 import com.example.twoscreens.ui.base.BaseViewModel
 import com.example.twoscreens.ui.base.StateStore
-import com.example.twoscreens.ui.todo.TodoItemDto
-import com.google.firebase.Timestamp
-import com.google.firebase.firestore.FirebaseFirestore
+import com.example.twoscreens.ui.todo.TaskItemDto
 import kotlinx.coroutines.CoroutineScope
 
 class FormViewModel(
-    todoItemDto: TodoItemDto?,
+    taskItemDto: TaskItemDto?,
+    private val createTask: CreateTask,
+    private val updateTask: UpdateTask,
     coroutineScope: CoroutineScope? = null
 ) : BaseViewModel(coroutineScope), StateEmitter<FormViewState> {
 
-    private val stateStore = StateStore(FormViewState(todoItemDto, isEditMode = todoItemDto != null))
+    private val stateStore = StateStore(FormViewState(taskItemDto, isEditMode = taskItemDto != null))
 
     override fun observeState() = stateStore.observe()
 
-    val onFireStoreFailed = Event<String>()
-    val onFireStoreSuccess = Event<Unit>()
+    val doOnError = Event<String>()
+    val doOnSuccess = Event<Int>()
 
-    fun sendTaskToFirebase(title: String, description: String, iconUrl: String) {
-        val fireStore = FirebaseFirestore.getInstance()
-
-        val task: MutableMap<String, Any> = HashMap()
-        task["title"] = title
-        task["description"] = description
-        task["icon"] = iconUrl
-        task["creationDate"] = Timestamp.now()
-
-        fireStore.collection("tasks").add(task)
-            .addOnSuccessListener {
-                onFireStoreSuccess.postEvent(Unit)
+    fun createOrUpdateTask(title: String, description: String, iconUrl: String) {
+        when (stateStore.currentState.isEditMode) {
+            true -> {
+                updateTask.invoke(stateStore.currentState.item!!.id, title, description, iconUrl)
+                    .addOnSuccessListener { doOnSuccess.postEvent(R.string.task_updated) }
+                    .addOnFailureListener { exception -> exception.message?.let { doOnError.postEvent(it) } }
             }
-            .addOnFailureListener { exception ->
-                exception.message?.let { onFireStoreFailed.postEvent(it) }
+            false -> {
+                createTask.invoke(title, description, iconUrl)
+                    .addOnSuccessListener { doOnSuccess.postEvent(R.string.task_created) }
+                    .addOnFailureListener { exception -> exception.message?.let { doOnError.postEvent(it) } }
             }
+        }
     }
 
 }

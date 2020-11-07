@@ -13,9 +13,10 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/titleLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/title"
+            app:errorEnabled="true"
             app:layout_constraintBottom_toTopOf="@+id/descriptionLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -35,9 +36,10 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/descriptionLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/description"
+            app:errorEnabled="true"
             app:layout_constraintBottom_toTopOf="@+id/iconLinkLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -57,7 +59,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/iconLinkLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/icon_link"
             app:layout_constraintBottom_toTopOf="@+id/submit"
