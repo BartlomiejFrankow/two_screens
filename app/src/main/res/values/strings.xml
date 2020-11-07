@@ -5,8 +5,8 @@
     <string name="icon_link">Optional icon link</string>
     <string name="create">Create</string>
     <string name="edit">Edit</string>
-    <string name="success_submit_info">Successfully submitted!</string>
-    <string name="delete_info">Do you want to remove this item?</string>
+    <string name="fire_store_create_task_success">Task successfully created!</string>
+    <string name="delete">Do you want to remove this item?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
 

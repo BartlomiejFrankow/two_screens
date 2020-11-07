@@ -7,6 +7,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.twoscreens.R
+import com.example.twoscreens.onEachEvent
 import com.example.twoscreens.onEachState
 import com.example.twoscreens.ui.todo.TodoItemDto
 import com.example.twoscreens.ui.todo.TodoListFragment
@@ -23,9 +24,17 @@ class FormFragment : Fragment(R.layout.fragment_form) {
 
         model.onEachState(this, ::render)
 
-        submit.setOnClickListener {
-            Toast.makeText(requireContext(), R.string.success_submit_info, Toast.LENGTH_LONG).show()
+        model.onFireStoreFailed.onEachEvent(this) { message ->
+            Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+        }
+        model.onFireStoreSuccess.onEachEvent(this) {
+            Toast.makeText(requireContext(), R.string.fire_store_create_task_success, Toast.LENGTH_LONG).show()
             findNavController().navigateUp()
+        }
+
+        submit.setOnClickListener {
+            // TODO do validations
+            model.sendTaskToFirebase(title.text.toString(), description.text.toString(), iconUrl.text.toString())
         }
     }
 
@@ -35,7 +44,7 @@ class FormFragment : Fragment(R.layout.fragment_form) {
         state.item?.let { item ->
             title.setText(item.title)
             description.setText(item.description)
-            iconLink.setText(item.iconUrl)
+            iconUrl.setText(item.iconUrl)
         }
     }
 

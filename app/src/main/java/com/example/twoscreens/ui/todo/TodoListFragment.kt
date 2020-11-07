@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.example.twoscreens.R
+import com.example.twoscreens.hideSoftKeyboard
 import com.example.twoscreens.onEachState
 import com.example.twoscreens.ui.todo.form.FormFragment
 import kotlinx.android.synthetic.main.fragment_todo_list.*
@@ -22,6 +23,8 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        hideSoftKeyboard(requireActivity())
+
         model.onEachState(this, ::render)
 
         list.adapter = adapter
@@ -37,7 +40,7 @@ class TodoListFragment : Fragment(R.layout.fragment_todo_list) {
 
     private fun askForDelete() {
         AlertDialog.Builder(context)
-            .setMessage(R.string.delete_info)
+            .setMessage(R.string.delete)
             .setPositiveButton(R.string.yes) { dialog, _ ->
                 dialog.cancel()
             }
