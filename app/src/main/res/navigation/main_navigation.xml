@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/todoListFragment"
-        android:name="com.example.twoscreens.ui.todo.TodoListFragment"
-        android:label="TODO"
-        tools:layout="@layout/fragment_todo_list">
+        android:name="com.example.twoscreens.ui.todo.TasksListFragment"
+        android:label="@string/tasks_fragment_name"
+        tools:layout="@layout/fragment_tasks_list">
 
         <action
             android:id="@+id/action_todoList_to_form"
@@ -19,7 +19,7 @@
     <fragment
         android:id="@+id/formFragment"
         android:name="com.example.twoscreens.ui.todo.form.FormFragment"
-        android:label="Form"
+        android:label="@string/form_fragment_name"
         tools:layout="@layout/fragment_form" />
 
 </navigation>

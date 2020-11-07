@@ -1,7 +1,8 @@
 package com.example.twoscreens
 
 import android.app.Application
-import com.example.twoscreens.module.viewModelModule
+import com.example.twoscreens.modules.firebaseModule
+import com.example.twoscreens.modules.viewModelModule
 import com.jakewharton.threetenabp.AndroidThreeTen
 import org.koin.core.context.startKoin
 
@@ -13,7 +14,12 @@ open class App : Application() {
         initAndroidThreeTen()
 
         startKoin {
-            modules(viewModelModule)
+            modules(
+                listOf(
+                    viewModelModule,
+                    firebaseModule
+                )
+            )
         }
     }
 

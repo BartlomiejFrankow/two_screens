@@ -2,6 +2,8 @@
 <resources>
     <dimen name="item_padding">8dp</dimen>
     <dimen name="small_padding">4dp</dimen>
+    <dimen name="medium_padding">8dp</dimen>
+    <dimen name="icon_card_radius">8dp</dimen>
     <dimen name="margin">16dp</dimen>
     <dimen name="icon_size">48dp</dimen>
 </resources>

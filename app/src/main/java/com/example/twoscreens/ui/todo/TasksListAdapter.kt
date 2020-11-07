@@ -12,8 +12,8 @@ import kotlinx.android.synthetic.main.item_to_do.view.*
 import org.threeten.bp.Instant
 import java.io.Serializable
 
-class TodoListAdapter(val onLongClick: (TodoItemDto) -> Unit, val onClick: (TodoItemDto) -> Unit) :
-    ListAdapter<TodoItemDto, RecyclerView.ViewHolder>(TodoItemCallBack()) {
+class TodoListAdapter(val onLongClick: (TaskItemDto) -> Unit, val onClick: (TaskItemDto) -> Unit) :
+    ListAdapter<TaskItemDto, RecyclerView.ViewHolder>(TodoItemCallBack()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         LayoutInflater.from(parent.context)
@@ -40,9 +40,9 @@ class TodoListAdapter(val onLongClick: (TodoItemDto) -> Unit, val onClick: (Todo
     }
 }
 
-data class TodoItemDto(val id: Int, val title: String, val description: String, val iconUrl: String?, val creationDate: Instant): Serializable
+data class TaskItemDto(val id: String, val title: String, val description: String, val iconUrl: String?, val creationDate: Instant): Serializable
 
-internal class TodoItemCallBack : DiffUtil.ItemCallback<TodoItemDto>() {
-    override fun areItemsTheSame(oldItemDto: TodoItemDto, newItemDto: TodoItemDto) = oldItemDto.id == newItemDto.id
-    override fun areContentsTheSame(oldItemDto: TodoItemDto, newItemDto: TodoItemDto) = oldItemDto == newItemDto
+internal class TodoItemCallBack : DiffUtil.ItemCallback<TaskItemDto>() {
+    override fun areItemsTheSame(oldItemDto: TaskItemDto, newItemDto: TaskItemDto) = oldItemDto == newItemDto
+    override fun areContentsTheSame(oldItemDto: TaskItemDto, newItemDto: TaskItemDto) = oldItemDto == newItemDto
 }
