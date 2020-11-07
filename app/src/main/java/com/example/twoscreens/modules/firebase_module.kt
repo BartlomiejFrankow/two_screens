@@ -8,4 +8,5 @@ val firebaseModule = module {
     factory<CreateTask> { CreateTaskImpl(FirebaseFirestore.getInstance()) }
     factory<GetTasks> { GetTasksImpl(FirebaseFirestore.getInstance()) }
     factory<UpdateTask> { UpdateTaskImpl(FirebaseFirestore.getInstance()) }
+    factory<DeleteTask> { DeleteTaskImpl(FirebaseFirestore.getInstance()) }
 }

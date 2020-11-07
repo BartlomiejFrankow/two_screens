@@ -1,16 +1,12 @@
-package com.example.twoscreens.ui.todo
+package com.example.twoscreens.ui.tasks
 
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import com.example.twoscreens.R
-import com.example.twoscreens.hideSoftKeyboard
-import com.example.twoscreens.onEachEvent
-import com.example.twoscreens.onEachState
-import com.example.twoscreens.ui.todo.form.FormFragment
+import com.example.twoscreens.*
+import com.example.twoscreens.ui.tasks.form.FormFragment
 import kotlinx.android.synthetic.main.fragment_tasks_list.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -19,8 +15,8 @@ class TasksListFragment : Fragment(R.layout.fragment_tasks_list) {
     private val model: TasksListViewModel by viewModel()
 
     private val adapter = TodoListAdapter(
-        onClick = { todoItemDto -> FormFragment.navigate(this, todoItemDto) },
-        onLongClick = { askForDelete() }
+        onClick = { dto -> FormFragment.navigate(this, dto) },
+        onLongClick = { dto -> askForDelete(dto.id) }
     )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -29,10 +25,8 @@ class TasksListFragment : Fragment(R.layout.fragment_tasks_list) {
         hideSoftKeyboard(requireActivity())
 
         model.onEachState(this, ::render)
-
-        model.doOnError.onEachEvent(this) { message ->
-            Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
-        }
+        model.doOnError.onEachEvent(this, ::showToast)
+        model.onSuccessRemove.onEachEvent(this, ::showToast)
 
         list.adapter = adapter
 
@@ -47,15 +41,15 @@ class TasksListFragment : Fragment(R.layout.fragment_tasks_list) {
         adapter.submitList(state.items)
     }
 
-    private fun askForDelete() {
+    private fun askForDelete(id: String) {
         AlertDialog.Builder(context)
             .setMessage(R.string.delete)
             .setPositiveButton(R.string.yes) { dialog, _ ->
+                model.removeTask(id)
                 dialog.cancel()
             }
             .setNegativeButton(R.string.no) { dialog, _ -> dialog.cancel() }
             .show()
     }
-
 
 }

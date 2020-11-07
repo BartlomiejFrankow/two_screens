@@ -1,9 +1,10 @@
-package com.example.twoscreens.ui.todo
+package com.example.twoscreens.ui.tasks
 
 import com.example.twoscreens.firebase.CREATION_DATE
 import com.example.twoscreens.firebase.DESCRIPTION
 import com.example.twoscreens.firebase.ICON
 import com.example.twoscreens.firebase.TITLE
+import com.example.twoscreens.toMilli
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import org.threeten.bp.Instant
@@ -31,7 +32,7 @@ private fun mapToItem(snapshot: List<DocumentSnapshot>): List<TaskItemDto> {
             title = (document.data!![TITLE] as String),
             description = (document.data!![DESCRIPTION] as String),
             iconUrl = document.data!![ICON]?.let { it as String },
-            creationDate = Instant.ofEpochMilli((document.data!![CREATION_DATE] as Timestamp).seconds)
+            creationDate = Instant.ofEpochMilli((document.data!![CREATION_DATE] as Timestamp).toMilli())
         )
-    }.sortedByDescending { it.creationDate }
+    }
 }

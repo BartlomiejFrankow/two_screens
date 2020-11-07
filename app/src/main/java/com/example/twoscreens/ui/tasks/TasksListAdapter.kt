@@ -1,4 +1,4 @@
-package com.example.twoscreens.ui.todo
+package com.example.twoscreens.ui.tasks
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -40,7 +40,7 @@ class TodoListAdapter(val onLongClick: (TaskItemDto) -> Unit, val onClick: (Task
     }
 }
 
-data class TaskItemDto(val id: String, val title: String, val description: String, val iconUrl: String?, val creationDate: Instant): Serializable
+data class TaskItemDto(val id: String, val title: String, val description: String, val iconUrl: String?, val creationDate: Instant) : Serializable
 
 internal class TodoItemCallBack : DiffUtil.ItemCallback<TaskItemDto>() {
     override fun areItemsTheSame(oldItemDto: TaskItemDto, newItemDto: TaskItemDto) = oldItemDto == newItemDto
