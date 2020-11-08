@@ -1,16 +1,16 @@
-package com.example.twoscreens.ui.todo.form
+package com.example.twoscreens.ui.tasks.form
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.twoscreens.R
 import com.example.twoscreens.onEachEvent
 import com.example.twoscreens.onEachState
-import com.example.twoscreens.ui.todo.TasksListFragment
-import com.example.twoscreens.ui.todo.TaskItemDto
+import com.example.twoscreens.showToast
+import com.example.twoscreens.ui.tasks.TaskItemDto
+import com.example.twoscreens.ui.tasks.TasksListFragment
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.android.synthetic.main.fragment_form.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -24,12 +24,9 @@ class FormFragment : Fragment(R.layout.fragment_form) {
         super.onViewCreated(view, savedInstanceState)
 
         model.onEachState(this, ::render)
-
-        model.doOnError.onEachEvent(this) { message ->
-            Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
-        }
-        model.doOnSuccess.onEachEvent(this) { message ->
-            Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+        model.onError.onEachEvent(this, ::showToast)
+        model.onSuccess.onEachEvent(this) { message ->
+            showToast(message)
             findNavController().navigateUp()
         }
 

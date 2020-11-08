@@ -17,8 +17,6 @@ class UpdateTaskImpl(private val fireStore: FirebaseFirestore) : UpdateTask {
         updateTask[CREATION_DATE] = Timestamp.now()
         if (iconUrl.isNotEmpty()) updateTask[ICON] = iconUrl
 
-        val a = updateTask
-
         return fireStore.collection(TASKS_COLLECTION).document(id).update(updateTask)
     }
 }

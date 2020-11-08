@@ -1,28 +1,30 @@
-package com.example.twoscreens.ui.todo
+package com.example.twoscreens.ui.tasks
 
 import com.example.twoscreens.firebase.CREATION_DATE
 import com.example.twoscreens.firebase.DESCRIPTION
 import com.example.twoscreens.firebase.ICON
 import com.example.twoscreens.firebase.TITLE
+import com.example.twoscreens.toMilli
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import org.threeten.bp.Instant
 
 data class TasksListViewState(
-    val snapshot: List<DocumentSnapshot>? = null
+    val documents: MutableList<DocumentSnapshot>? = null,
+    val lastKnownDocument: DocumentSnapshot? = null
 )
 
 val TasksListViewState.items
     get() = when {
-        snapshot.isNullOrEmpty() -> emptyList()
-        else -> mapToItem(snapshot)
+        documents.isNullOrEmpty() -> emptyList()
+        else -> mapToItem(documents)
     }
 
 val TasksListViewState.showLoading
-    get() = snapshot == null
+    get() = documents == null
 
 val TasksListViewState.showEmptyInfo
-    get() = snapshot != null && snapshot.isEmpty()
+    get() = documents != null && documents.isEmpty()
 
 private fun mapToItem(snapshot: List<DocumentSnapshot>): List<TaskItemDto> {
     return snapshot.map { document ->
@@ -31,7 +33,7 @@ private fun mapToItem(snapshot: List<DocumentSnapshot>): List<TaskItemDto> {
             title = (document.data!![TITLE] as String),
             description = (document.data!![DESCRIPTION] as String),
             iconUrl = document.data!![ICON]?.let { it as String },
-            creationDate = Instant.ofEpochMilli((document.data!![CREATION_DATE] as Timestamp).seconds)
+            creationDate = Instant.ofEpochMilli((document.data!![CREATION_DATE] as Timestamp).toMilli())
         )
-    }.sortedByDescending { it.creationDate }
+    }
 }
