@@ -10,21 +10,21 @@ import com.google.firebase.firestore.DocumentSnapshot
 import org.threeten.bp.Instant
 
 data class TasksListViewState(
-    val documents: MutableList<DocumentSnapshot>? = null,
+    val tasks: MutableList<DocumentSnapshot>? = null,
     val lastKnownDocument: DocumentSnapshot? = null
 )
 
 val TasksListViewState.items
     get() = when {
-        documents.isNullOrEmpty() -> emptyList()
-        else -> mapToItem(documents)
+        tasks.isNullOrEmpty() -> emptyList()
+        else -> mapToItem(tasks)
     }
 
 val TasksListViewState.showLoading
-    get() = documents == null
+    get() = tasks == null
 
 val TasksListViewState.showEmptyInfo
-    get() = documents != null && documents.isEmpty()
+    get() = tasks != null && tasks.isEmpty()
 
 private fun mapToItem(snapshot: List<DocumentSnapshot>): List<TaskItemDto> {
     return snapshot.map { document ->

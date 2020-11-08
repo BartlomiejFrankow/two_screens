@@ -1,31 +1,43 @@
 package com.example.twoscreens.firebase
 
-import com.google.android.gms.tasks.Task
+import com.example.twoscreens.firebase.results.GetTasksResponse
+import com.example.twoscreens.firebase.results.GetTasksResponse.Error
+import com.example.twoscreens.firebase.results.GetTasksResponse.Success
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query.Direction.DESCENDING
-import com.google.firebase.firestore.QuerySnapshot
 
-const val PAGINATION_LIMIT = 7L
+const val PAGINATION_LIMIT = 20L
 
 interface GetTasks {
-    fun getFirstTasks(): Task<QuerySnapshot>
-    fun getNextTasks(document: DocumentSnapshot): Task<QuerySnapshot>
+    fun observeTasks(response: (GetTasksResponse) -> Unit)
+    fun getNextTasks(document: DocumentSnapshot, response: (GetTasksResponse) -> Unit)
 }
 
 class GetTasksImpl(fireStore: FirebaseFirestore) : GetTasks {
 
     private val collection = fireStore.collection(TASKS_COLLECTION)
 
-    override fun getFirstTasks() = collection
-        .orderBy(CREATION_DATE, DESCENDING)
-        .limit(PAGINATION_LIMIT)
-        .get()
+    override fun observeTasks(response: (GetTasksResponse) -> Unit) {
+        collection
+            .orderBy(CREATION_DATE, DESCENDING)
+            .limit(PAGINATION_LIMIT)
+            .addSnapshotListener { snapshot, error ->
+                when {
+                    error != null -> response(Error(FirebaseError().getMessage(error.code)))
+                    snapshot != null -> response(Success(snapshot.documents))
+                }
+            }
+    }
 
-    override fun getNextTasks(document: DocumentSnapshot) = collection
-        .orderBy(CREATION_DATE, DESCENDING)
-        .startAfter(document)
-        .limit(PAGINATION_LIMIT)
-        .get()
+    override fun getNextTasks(document: DocumentSnapshot, response: (GetTasksResponse) -> Unit) {
+        collection
+            .orderBy(CREATION_DATE, DESCENDING)
+            .startAfter(document)
+            .limit(PAGINATION_LIMIT)
+            .get()
+            .addOnSuccessListener { snapshot -> response(Success(snapshot.documents)) }
+            .addOnFailureListener { exception -> exception.message?.let { response(Error(it)) } }
+    }
 
 }

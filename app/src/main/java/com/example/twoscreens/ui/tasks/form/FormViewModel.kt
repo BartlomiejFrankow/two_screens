@@ -1,10 +1,11 @@
 package com.example.twoscreens.ui.tasks.form
 
 import com.example.twoscreens.Event
-import com.example.twoscreens.R
 import com.example.twoscreens.StateEmitter
 import com.example.twoscreens.firebase.CreateTask
 import com.example.twoscreens.firebase.UpdateTask
+import com.example.twoscreens.firebase.results.CreateOrUpdateTaskResponse.Error
+import com.example.twoscreens.firebase.results.CreateOrUpdateTaskResponse.Success
 import com.example.twoscreens.ui.base.BaseViewModel
 import com.example.twoscreens.ui.base.StateStore
 import com.example.twoscreens.ui.tasks.TaskItemDto
@@ -26,17 +27,27 @@ class FormViewModel(
 
     fun createOrUpdateTask(title: String, description: String, iconUrl: String) {
         when (stateStore.currentState.isEditMode) {
-            true -> {
-                updateTask.invoke(stateStore.currentState.item!!.id, title, description, iconUrl)
-                    .addOnSuccessListener { onSuccess.postEvent(R.string.task_updated) }
-                    .addOnFailureListener { exception -> exception.message?.let { onError.postEvent(it) } }
-            }
-            false -> {
-                createTask.invoke(title, description, iconUrl)
-                    .addOnSuccessListener { onSuccess.postEvent(R.string.task_created) }
-                    .addOnFailureListener { exception -> exception.message?.let { onError.postEvent(it) } }
-            }
+            true -> update(title, description, iconUrl)
+            false -> create(title, description, iconUrl)
         }
+    }
+
+    private fun create(title: String, description: String, iconUrl: String) {
+        createTask.invoke(title, description, iconUrl, response = { results ->
+            when (results) {
+                is Success -> onSuccess.postEvent(results.message)
+                is Error -> onError.postEvent(results.message)
+            }
+        })
+    }
+
+    private fun update(title: String, description: String, iconUrl: String) {
+        updateTask.invoke(stateStore.currentState.item!!.id, title, description, iconUrl, response = { results ->
+            when (results) {
+                is Success -> onSuccess.postEvent(results.message)
+                is Error -> onError.postEvent(results.message)
+            }
+        })
     }
 
 }
