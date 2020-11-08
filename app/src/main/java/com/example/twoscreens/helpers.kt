@@ -64,5 +64,5 @@ fun Instant.formatDate(pattern: String = "d MMMM, YYYY"): String = this.atZone(Z
 
 fun Timestamp.toMilli() = this.seconds * 1000
 
-fun Fragment.showToast(message: String) = Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
-fun Fragment.showToast(message: Int) = Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+fun Fragment.showToast(message: String) = Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+fun Fragment.showToast(message: Int) = Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()

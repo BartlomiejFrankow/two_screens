@@ -15,6 +15,7 @@
     <string name="error_invalid_field">This field cannot be empty</string>
     <string name="oops_empty_tasks_list">Oops your tasks list is empty…</string>
     <string name="removed">Task successfully removed</string>
+    <string name="next_page_loaded">Next page loaded</string>
 
     // descriptions
     <string name="add_new_description">Create new list item</string>
