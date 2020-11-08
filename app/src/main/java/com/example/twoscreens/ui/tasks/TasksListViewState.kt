@@ -24,7 +24,10 @@ val TasksListViewState.showLoading
     get() = tasks == null
 
 val TasksListViewState.showEmptyInfo
-    get() = tasks != null && tasks.isEmpty()
+    get() = tasks != null && items.isEmpty()
+
+val TasksListViewState.hasOnlyOneListElement
+    get() = tasks?.size == 1
 
 private fun mapToItem(snapshot: List<DocumentSnapshot>): List<TaskItemDto> {
     return snapshot.map { document ->

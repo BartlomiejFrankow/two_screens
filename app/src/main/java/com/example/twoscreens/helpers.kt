@@ -32,7 +32,7 @@ fun <STATE> StateEmitter<STATE>.onEachState(fragment: Fragment, consumer: (STATE
     }
 }
 
-fun ImageView.setIconUrl(url: String?) = Picasso.get()
+fun ImageView.setImageUrl(url: String?) = Picasso.get()
     .load(url)
     .placeholder(R.drawable.placeholder)
     .into(this, object : Callback {

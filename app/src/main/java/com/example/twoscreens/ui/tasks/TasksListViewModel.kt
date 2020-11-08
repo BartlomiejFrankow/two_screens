@@ -31,13 +31,12 @@ class TasksListViewModel(
                 when (results) {
                     is Success -> {
                         wasLastItemReached = false
-                        if (results.documents.isNotEmpty())
-                            stateStore.setState {
-                                copy(
-                                    tasks = results.documents.toMutableList(),
-                                    lastKnownDocument = results.documents[results.documents.size - 1]
-                                )
-                            }
+                        stateStore.setState {
+                            copy(
+                                tasks = results.documents.toMutableList(),
+                                lastKnownDocument = results.documents.lastOrNull()
+                            )
+                        }
                     }
                     is Error -> onError.postEvent(results.message)
                 }
@@ -67,14 +66,20 @@ class TasksListViewModel(
     }
 
     fun removeTask(id: String) {
+        val hasLastTaskBeforeRemove = stateStore.currentState.hasOnlyOneListElement
         scope.launch {
             deleteTask.invoke(id, response = { results ->
                 when (results) {
-                    is DeleteTaskResponse.Success -> onSuccessRemove.postEvent(results.message)
+                    is DeleteTaskResponse.Success -> {
+                        if (hasLastTaskBeforeRemove) clearTasksList()
+                        onSuccessRemove.postEvent(results.message)
+                    }
                     is DeleteTaskResponse.Error -> onError.postEvent(results.message)
                 }
             })
         }
     }
+
+    private fun clearTasksList() = stateStore.setState { copy(tasks = mutableListOf()) }
 
 }

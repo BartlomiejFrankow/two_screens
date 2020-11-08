@@ -2,16 +2,14 @@ package com.example.twoscreens.ui.tasks.form
 
 import android.os.Bundle
 import android.view.View
+import android.webkit.URLUtil
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.twoscreens.R
-import com.example.twoscreens.onEachEvent
-import com.example.twoscreens.onEachState
-import com.example.twoscreens.showToast
+import com.example.twoscreens.*
 import com.example.twoscreens.ui.tasks.TaskItemDto
 import com.example.twoscreens.ui.tasks.TasksListFragment
-import com.google.android.material.textfield.TextInputEditText
 import kotlinx.android.synthetic.main.fragment_form.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -31,20 +29,33 @@ class FormFragment : Fragment(R.layout.fragment_form) {
         }
 
         submit.setOnClickListener {
-            if (areFieldsValid(title, description))
+            if (areFieldsValid())
                 model.createOrUpdateTask(title.text.toString(), description.text.toString(), iconUrl.text.toString())
         }
+
+        iconUrl.addTextChangedListener(
+            DebouncedTextWatcher(viewLifecycleOwner.lifecycleScope) { url ->
+                if (isImageUrlValid()) {
+                    iconLinkLayout.error = ""
+                    preview.setImageUrl(url)
+                }
+            }
+        )
     }
 
-    private fun areFieldsValid(title: TextInputEditText, description: TextInputEditText): Boolean {
+    private fun areFieldsValid(): Boolean {
         val isTitleValid = !title.text.isNullOrEmpty()
         val isDescriptionValid = !description.text.isNullOrEmpty()
+        val isIconValid = iconUrl.text.isNullOrEmpty() || isImageUrlValid()
 
         if (isTitleValid) titleLayout.error = "" else titleLayout.error = getString(R.string.error_invalid_field)
         if (isDescriptionValid) descriptionLayout.error = "" else descriptionLayout.error = getString(R.string.error_invalid_field)
+        if (isIconValid) iconLinkLayout.error = "" else iconLinkLayout.error = getString(R.string.error_invalid_url)
 
-        return isTitleValid && isDescriptionValid
+        return isTitleValid && isDescriptionValid && isIconValid
     }
+
+    private fun isImageUrlValid() = URLUtil.isValidUrl(iconUrl.text.toString())
 
     private fun render(state: FormViewState) {
         submit.text = if (state.isEditMode) getString(R.string.edit) else getString(R.string.create)

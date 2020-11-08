@@ -15,7 +15,6 @@ class UpdateTaskImpl(private val fireStore: FirebaseFirestore) : UpdateTask {
         val updateTask: MutableMap<String, Any> = HashMap()
         updateTask[TITLE] = title
         updateTask[DESCRIPTION] = description
-        updateTask[CREATION_DATE] = Timestamp.now()
         if (iconUrl.isNotEmpty()) updateTask[ICON] = iconUrl
 
         fireStore
