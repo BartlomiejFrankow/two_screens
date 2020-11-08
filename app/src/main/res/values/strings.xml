@@ -12,10 +12,28 @@
     <string name="delete">Do you want to remove this task?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="error_invalid_field">This field cannot be empty</string>
     <string name="oops_empty_tasks_list">Oops your tasks list is empty…</string>
     <string name="removed">Task successfully removed</string>
-    <string name="next_page_loaded">Next page loaded</string>
+
+    // errors
+    <string name="error_invalid_field">This field cannot be empty</string>
+    <string name="error_cancelled">Oops operation cancelled</string>
+    <string name="error_unknown">Oops something wen\'t wrong</string>
+    <string name="error_invalid_argument">Oops invalid argument</string>
+    <string name="error_not_found">Oops request not found</string>
+    <string name="error_deadline_exceeded">Oops deadline expired</string>
+    <string name="error_already_exist">Oops task already exist</string>
+    <string name="error_permission_denied">Oops permission denied</string>
+    <string name="error_resource_exhausted">Oops resource exhausted</string>
+    <string name="error_failed_preconditions">Oops precondition failed</string>
+    <string name="error_aborted">Oops aborted</string>
+    <string name="error_out_of_range">Oops wrong range</string>
+    <string name="error_unimplemented">Oops method wasn\'t implemented</string>
+    <string name="error_internal">Oops something wen\'t wrong on server side</string>
+    <string name="error_unavailable">Oops server is unavailable</string>
+    <string name="error_data_loss">Oops data loss</string>
+    <string name="error_unauthenticated">Oops authentication expires</string>
+    <string name="error_unrecognized">Unrecognized error</string>
 
     // descriptions
     <string name="add_new_description">Create new list item</string>

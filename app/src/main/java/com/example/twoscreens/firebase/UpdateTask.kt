@@ -1,16 +1,16 @@
 package com.example.twoscreens.firebase
 
 import com.example.twoscreens.R
-import com.example.twoscreens.firebase.results.CreateOrUpdateTaskResponse
+import com.example.twoscreens.firebase.responses.CreateOrUpdateTaskResponse
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 
 interface UpdateTask {
-    fun invoke(id: String, title: String, description: String, iconUrl: String, response: (CreateOrUpdateTaskResponse) -> Unit)
+    suspend fun invoke(id: String, title: String, description: String, iconUrl: String, response: (CreateOrUpdateTaskResponse) -> Unit)
 }
 
 class UpdateTaskImpl(private val fireStore: FirebaseFirestore) : UpdateTask {
-    override fun invoke(id: String, title: String, description: String, iconUrl: String, response: (CreateOrUpdateTaskResponse) -> Unit) {
+    override suspend fun invoke(id: String, title: String, description: String, iconUrl: String, response: (CreateOrUpdateTaskResponse) -> Unit) {
 
         val updateTask: MutableMap<String, Any> = HashMap()
         updateTask[TITLE] = title

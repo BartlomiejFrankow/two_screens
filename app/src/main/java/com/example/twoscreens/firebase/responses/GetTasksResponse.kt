@@ -1,4 +1,4 @@
-package com.example.twoscreens.firebase.results
+package com.example.twoscreens.firebase.responses
 
 import com.google.firebase.firestore.DocumentSnapshot
 

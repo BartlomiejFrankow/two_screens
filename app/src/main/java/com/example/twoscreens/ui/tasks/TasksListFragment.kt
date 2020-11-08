@@ -32,7 +32,6 @@ class TasksListFragment : Fragment(R.layout.fragment_tasks_list) {
         model.onEachState(this, ::render)
         model.onError.onEachEvent(this, ::showToast)
         model.onSuccessRemove.onEachEvent(this, ::showToast)
-        model.onNextPageLoaded.onEachEvent(this, ::showToast)
 
         list.adapter = adapter
 

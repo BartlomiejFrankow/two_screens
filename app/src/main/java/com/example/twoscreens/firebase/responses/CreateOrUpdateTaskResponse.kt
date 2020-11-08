@@ -1,4 +1,4 @@
-package com.example.twoscreens.firebase.results
+package com.example.twoscreens.firebase.responses
 
 sealed class CreateOrUpdateTaskResponse {
     data class Success(val message: Int) : CreateOrUpdateTaskResponse()
