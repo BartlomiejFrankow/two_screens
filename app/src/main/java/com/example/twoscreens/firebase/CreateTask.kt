@@ -1,7 +1,7 @@
 package com.example.twoscreens.firebase
 
 import com.example.twoscreens.R
-import com.example.twoscreens.firebase.results.CreateOrUpdateTaskResponse
+import com.example.twoscreens.firebase.responses.CreateOrUpdateTaskResponse
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -12,11 +12,11 @@ const val ICON = "icon"
 const val CREATION_DATE = "creationDate"
 
 interface CreateTask {
-    fun invoke(title: String, description: String, iconUrl: String, response: (CreateOrUpdateTaskResponse) -> Unit)
+    suspend fun invoke(title: String, description: String, iconUrl: String, response: (CreateOrUpdateTaskResponse) -> Unit)
 }
 
 class CreateTaskImpl(private val fireStore: FirebaseFirestore) : CreateTask {
-    override fun invoke(title: String, description: String, iconUrl: String, response: (CreateOrUpdateTaskResponse) -> Unit) {
+    override suspend fun invoke(title: String, description: String, iconUrl: String, response: (CreateOrUpdateTaskResponse) -> Unit) {
 
         val task: MutableMap<String, Any> = HashMap()
         task[TITLE] = title

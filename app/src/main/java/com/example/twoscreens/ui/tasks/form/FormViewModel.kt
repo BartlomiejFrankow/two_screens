@@ -4,12 +4,13 @@ import com.example.twoscreens.Event
 import com.example.twoscreens.StateEmitter
 import com.example.twoscreens.firebase.CreateTask
 import com.example.twoscreens.firebase.UpdateTask
-import com.example.twoscreens.firebase.results.CreateOrUpdateTaskResponse.Error
-import com.example.twoscreens.firebase.results.CreateOrUpdateTaskResponse.Success
+import com.example.twoscreens.firebase.responses.CreateOrUpdateTaskResponse.Error
+import com.example.twoscreens.firebase.responses.CreateOrUpdateTaskResponse.Success
 import com.example.twoscreens.ui.base.BaseViewModel
 import com.example.twoscreens.ui.base.StateStore
 import com.example.twoscreens.ui.tasks.TaskItemDto
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 class FormViewModel(
     taskItemDto: TaskItemDto?,
@@ -27,12 +28,12 @@ class FormViewModel(
 
     fun createOrUpdateTask(title: String, description: String, iconUrl: String) {
         when (stateStore.currentState.isEditMode) {
-            true -> update(title, description, iconUrl)
-            false -> create(title, description, iconUrl)
+            true -> scope.launch { update(title, description, iconUrl) }
+            false -> scope.launch { create(title, description, iconUrl) }
         }
     }
 
-    private fun create(title: String, description: String, iconUrl: String) {
+    private suspend fun create(title: String, description: String, iconUrl: String) {
         createTask.invoke(title, description, iconUrl, response = { results ->
             when (results) {
                 is Success -> onSuccess.postEvent(results.message)
@@ -41,7 +42,7 @@ class FormViewModel(
         })
     }
 
-    private fun update(title: String, description: String, iconUrl: String) {
+    private suspend fun update(title: String, description: String, iconUrl: String) {
         updateTask.invoke(stateStore.currentState.item!!.id, title, description, iconUrl, response = { results ->
             when (results) {
                 is Success -> onSuccess.postEvent(results.message)
