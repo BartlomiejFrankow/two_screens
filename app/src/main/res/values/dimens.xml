@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="item_padding">8dp</dimen>
-    <dimen name="small_padding">4dp</dimen>
-    <dimen name="medium_padding">8dp</dimen>
+    <dimen name="small_margin">4dp</dimen>
+    <dimen name="medium_margin">8dp</dimen>
+    <dimen name="big_margin">16dp</dimen>
     <dimen name="icon_card_radius">8dp</dimen>
-    <dimen name="margin">16dp</dimen>
     <dimen name="icon_size">48dp</dimen>
+    <dimen name="preview_size">160dp</dimen>
 </resources>

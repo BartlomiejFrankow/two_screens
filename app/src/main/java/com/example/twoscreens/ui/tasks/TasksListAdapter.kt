@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.twoscreens.R
 import com.example.twoscreens.formatDate
-import com.example.twoscreens.setIconUrl
+import com.example.twoscreens.setImageUrl
 import kotlinx.android.synthetic.main.item_to_do.view.*
 import org.threeten.bp.Instant
 import java.io.Serializable
@@ -26,7 +26,7 @@ class TodoListAdapter(val onLongClick: (TaskItemDto) -> Unit, val onClick: (Task
 
             title.text = item.title
             description.text = item.description
-            icon.setIconUrl(item.iconUrl)
+            icon.setImageUrl(item.iconUrl)
             date.text = item.creationDate.formatDate()
 
             setOnClickListener {

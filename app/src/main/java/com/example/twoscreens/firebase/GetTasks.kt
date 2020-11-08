@@ -7,7 +7,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query.Direction.DESCENDING
 
-const val PAGINATION_LIMIT = 20L
+const val PAGINATION_LIMIT = 30L
 
 interface GetTasks {
     suspend fun observeTasks(response: (GetTasksResponse) -> Unit)

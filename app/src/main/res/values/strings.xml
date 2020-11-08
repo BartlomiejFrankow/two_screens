@@ -12,11 +12,12 @@
     <string name="delete">Do you want to remove this task?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="oops_empty_tasks_list">Oops your tasks list is empty…</string>
+    <string name="empty_tasks_list">Your tasks list is empty…</string>
     <string name="removed">Task successfully removed</string>
 
     // errors
     <string name="error_invalid_field">This field cannot be empty</string>
+    <string name="error_invalid_url">This image url is invalid</string>
     <string name="error_cancelled">Oops operation cancelled</string>
     <string name="error_unknown">Oops something wen\'t wrong</string>
     <string name="error_invalid_argument">Oops invalid argument</string>
