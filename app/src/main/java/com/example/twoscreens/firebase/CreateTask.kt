@@ -1,8 +1,8 @@
 package com.example.twoscreens.firebase
 
-import com.google.android.gms.tasks.Task
+import com.example.twoscreens.R
+import com.example.twoscreens.firebase.results.CreateOrUpdateTaskResponse
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 
 const val TASKS_COLLECTION = "tasks"
@@ -12,11 +12,11 @@ const val ICON = "icon"
 const val CREATION_DATE = "creationDate"
 
 interface CreateTask {
-    fun invoke(title: String, description: String, iconUrl: String): Task<DocumentReference>
+    fun invoke(title: String, description: String, iconUrl: String, response: (CreateOrUpdateTaskResponse) -> Unit)
 }
 
 class CreateTaskImpl(private val fireStore: FirebaseFirestore) : CreateTask {
-    override fun invoke(title: String, description: String, iconUrl: String): Task<DocumentReference> {
+    override fun invoke(title: String, description: String, iconUrl: String, response: (CreateOrUpdateTaskResponse) -> Unit) {
 
         val task: MutableMap<String, Any> = HashMap()
         task[TITLE] = title
@@ -24,6 +24,10 @@ class CreateTaskImpl(private val fireStore: FirebaseFirestore) : CreateTask {
         task[CREATION_DATE] = Timestamp.now()
         if (iconUrl.isNotEmpty()) task[ICON] = iconUrl
 
-        return fireStore.collection(TASKS_COLLECTION).add(task)
+        fireStore
+            .collection(TASKS_COLLECTION)
+            .add(task)
+            .addOnSuccessListener { response(CreateOrUpdateTaskResponse.Success(R.string.task_created)) }
+            .addOnFailureListener { error -> error.message?.let { response(CreateOrUpdateTaskResponse.Error(it)) } }
     }
 }
