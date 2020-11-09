@@ -30,7 +30,6 @@ class TasksListFragment : Fragment(R.layout.fragment_tasks_list) {
         hideSoftKeyboard(requireActivity())
 
         model.onEachState(this, ::render)
-        model.onError.onEachEvent(this, ::showToast)
         model.onSuccessRemove.onEachEvent(this, ::showToast)
 
         list.adapter = adapter

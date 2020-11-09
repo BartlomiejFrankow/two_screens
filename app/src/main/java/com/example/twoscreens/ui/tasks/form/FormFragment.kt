@@ -63,7 +63,10 @@ class FormFragment : Fragment(R.layout.fragment_form) {
         state.item?.let { item ->
             title.setText(item.title)
             description.setText(item.description)
-            iconUrl.setText(item.iconUrl)
+            item.iconUrl?.let { url->
+                iconUrl.setText(url)
+                preview.setImageUrl(url)
+            }
         }
     }
 
@@ -72,8 +75,8 @@ class FormFragment : Fragment(R.layout.fragment_form) {
         private val FormFragment.item get() = requireArguments().getSerializable(TODO_ITEM)?.let { it as TaskItemDto }
 
         // TODO if will have some additional time...
-        // I decide to move whole TaskItemDto because it's small. But if I will have more time then instead of moving dto I could create local db
-        // and store whole list to move only id between fragments. At Form fragment I could take this id and get object from local db.
+        // I decide to move whole TaskItemDto because it's small. But if I will have more time then instead of moving whole dto I could create local db
+        // and store tasks list to move only id between fragments. At Form fragment I could take this id and get object from local db.
         fun navigate(fragment: TasksListFragment, item: TaskItemDto? = null) {
             fragment.findNavController().navigate(R.id.action_todoList_to_form, bundleOf(TODO_ITEM to item))
         }

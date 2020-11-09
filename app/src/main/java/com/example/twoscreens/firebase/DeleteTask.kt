@@ -1,20 +1,22 @@
 package com.example.twoscreens.firebase
 
-import com.example.twoscreens.R
-import com.example.twoscreens.firebase.responses.DeleteTaskResponse
 import com.google.firebase.firestore.FirebaseFirestore
 
 interface DeleteTask {
-    suspend fun invoke(id: String, response: (DeleteTaskResponse) -> Unit)
+    suspend fun invoke(id: String, response: (RequestResult<Unit>) -> Unit)
 }
 
-class DeleteTaskImpl(private val fireStore: FirebaseFirestore) : DeleteTask {
-    override suspend fun invoke(id: String, response: (DeleteTaskResponse) -> Unit) {
+class DeleteTaskImpl(private val fireStore: FirebaseFirestore, private val errorExecutor: FirebaseErrorExecutor) : DeleteTask {
+    override suspend fun invoke(id: String, response: (RequestResult<Unit>) -> Unit) {
         fireStore
             .collection(TASKS_COLLECTION)
             .document(id)
             .delete()
-            .addOnSuccessListener { response(DeleteTaskResponse.Success(R.string.removed)) }
-            .addOnFailureListener { error -> error.message?.let { response(DeleteTaskResponse.Error(it)) } }
+            .addOnCompleteListener { body->
+                when {
+                    body.isSuccessful -> response(RequestResult.Success(Unit))
+                    else -> body.exception?.message?.let { errorExecutor.execute(it) }
+                }
+            }
     }
 }

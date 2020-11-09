@@ -1,20 +1,20 @@
 package com.example.twoscreens.ui.tasks
 
 import com.example.twoscreens.Event
+import com.example.twoscreens.R
 import com.example.twoscreens.StateEmitter
 import com.example.twoscreens.firebase.DeleteTask
-import com.example.twoscreens.firebase.GetTasks
+import com.example.twoscreens.firebase.ObserveTasksCollection
 import com.example.twoscreens.firebase.PAGINATION_LIMIT
-import com.example.twoscreens.firebase.responses.DeleteTaskResponse
-import com.example.twoscreens.firebase.responses.GetTasksResponse.Error
-import com.example.twoscreens.firebase.responses.GetTasksResponse.Success
+import com.example.twoscreens.firebase.TasksResponse
+import com.example.twoscreens.firebase.RequestResult.Success
 import com.example.twoscreens.ui.base.BaseViewModel
 import com.example.twoscreens.ui.base.StateStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class TasksListViewModel(
-    private val getTasks: GetTasks,
+    private val observeTasksCollection: ObserveTasksCollection,
     private val deleteTask: DeleteTask,
     coroutineScope: CoroutineScope? = null
 ) : BaseViewModel(coroutineScope), StateEmitter<TasksListViewState> {
@@ -22,23 +22,24 @@ class TasksListViewModel(
     private val stateStore = StateStore(TasksListViewState())
     var wasLastItemReached = false
 
-    val onError = Event<String>()
     val onSuccessRemove = Event<Int>()
 
     init {
+        observeTasks()
+    }
+
+    private fun observeTasks() {
         scope.launch {
-            getTasks.observeTasks(response = { results ->
-                when (results) {
-                    is Success -> {
-                        wasLastItemReached = false
-                        stateStore.setState {
-                            copy(
-                                tasks = results.documents.toMutableList(),
-                                lastKnownDocument = results.documents.lastOrNull()
-                            )
-                        }
+            observeTasksCollection.observeTasks(response = { results ->
+                clearTasksList()
+                if (results is Success) {
+                    wasLastItemReached = false
+                    stateStore.setState {
+                        copy(
+                            tasks = results.body.documents.toMutableList(),
+                            lastKnownDocument = results.body.lastDocument
+                        )
                     }
-                    is Error -> onError.postEvent(results.message)
                 }
             })
         }
@@ -48,33 +49,27 @@ class TasksListViewModel(
 
     fun getNextTasks() {
         scope.launch {
-            getTasks.getNextTasks(stateStore.currentState.lastKnownDocument!!, response = { results ->
-                when (results) {
-                    is Success -> mergeTasksAndUpdateState(results)
-                    is Error -> onError.postEvent(results.message)
-                }
+            observeTasksCollection.getNextTasks(stateStore.currentState.lastKnownDocument!!, response = { results ->
+                if (results is Success) mergeTasksAndUpdateState(results.body)
             })
         }
     }
 
-    private fun mergeTasksAndUpdateState(results: Success) {
-        val snapShotSize = results.documents.size
+    private fun mergeTasksAndUpdateState(response: TasksResponse) {
+        val snapShotSize = response.documents.size
         wasLastItemReached = snapShotSize < PAGINATION_LIMIT
-        val mergedTasks = stateStore.currentState.tasks!!.apply { this.addAll(results.documents) }
+        val mergedTasks = stateStore.currentState.tasks!!.apply { this.addAll(response.documents) }
 
-        stateStore.setState { copy(tasks = mergedTasks, lastKnownDocument = mergedTasks.last()) }
+        stateStore.setState { copy(tasks = mergedTasks, lastKnownDocument = response.lastDocument) }
     }
 
     fun removeTask(id: String) {
         val hasLastTaskBeforeRemove = stateStore.currentState.hasOnlyOneListElement
         scope.launch {
             deleteTask.invoke(id, response = { results ->
-                when (results) {
-                    is DeleteTaskResponse.Success -> {
-                        if (hasLastTaskBeforeRemove) clearTasksList()
-                        onSuccessRemove.postEvent(results.message)
-                    }
-                    is DeleteTaskResponse.Error -> onError.postEvent(results.message)
+                if (results is Success) {
+                    if (hasLastTaskBeforeRemove) clearTasksList()
+                    onSuccessRemove.postEvent(R.string.removed)
                 }
             })
         }

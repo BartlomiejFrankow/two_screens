@@ -6,9 +6,9 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 val firebaseModule = module {
-    factory<CreateTask> { CreateTaskImpl(FirebaseFirestore.getInstance()) }
-    factory<GetTasks> { GetTasksImpl(FirebaseFirestore.getInstance(), get()) }
-    factory<UpdateTask> { UpdateTaskImpl(FirebaseFirestore.getInstance()) }
-    factory<DeleteTask> { DeleteTaskImpl(FirebaseFirestore.getInstance()) }
-    factory { FirebaseError(androidContext()) }
+    factory<CreateTask> { CreateTaskImpl(FirebaseFirestore.getInstance(), get()) }
+    factory<ObserveTasksCollection> { ObserveTasksCollectionImpl(FirebaseFirestore.getInstance(), get()) }
+    factory<UpdateTask> { UpdateTaskImpl(FirebaseFirestore.getInstance(), get()) }
+    factory<DeleteTask> { DeleteTaskImpl(FirebaseFirestore.getInstance(), get()) }
+    factory { FirebaseErrorExecutor(androidContext(), get()) }
 }
