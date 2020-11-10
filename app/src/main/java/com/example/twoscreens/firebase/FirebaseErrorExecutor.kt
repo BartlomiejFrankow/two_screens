@@ -5,10 +5,10 @@ import com.example.twoscreens.R
 import com.google.firebase.firestore.FirebaseFirestoreException.Code
 import com.google.firebase.firestore.FirebaseFirestoreException.Code.*
 
-class FirebaseError(private val context: Context) {
+class FirebaseErrorExecutor(private val context: Context, private val errorMessage: ErrorMessage) {
 
-    fun getMessage(errorCode: Code): String {
-        return when (errorCode) {
+    fun execute(errorCode: Code) {
+        val message =  when (errorCode) {
             CANCELLED -> ErrorMessages.CANCELLED.message.getString()
             UNKNOWN -> ErrorMessages.UNKNOWN.message.getString()
             INVALID_ARGUMENT -> ErrorMessages.INVALID_ARGUMENT.message.getString()
@@ -27,7 +27,11 @@ class FirebaseError(private val context: Context) {
             UNAUTHENTICATED -> ErrorMessages.UNAUTHENTICATED.message.getString()
             OK -> ErrorMessages.OK.message.getString()
         }
+
+        errorMessage.show(message)
     }
+
+    fun execute(message: String) = errorMessage.show(message)
 
     private fun Int.getString() = context.getString(this)
 

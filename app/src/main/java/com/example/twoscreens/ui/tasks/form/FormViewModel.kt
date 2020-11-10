@@ -1,11 +1,11 @@
 package com.example.twoscreens.ui.tasks.form
 
 import com.example.twoscreens.Event
+import com.example.twoscreens.R
 import com.example.twoscreens.StateEmitter
 import com.example.twoscreens.firebase.CreateTask
 import com.example.twoscreens.firebase.UpdateTask
-import com.example.twoscreens.firebase.responses.CreateOrUpdateTaskResponse.Error
-import com.example.twoscreens.firebase.responses.CreateOrUpdateTaskResponse.Success
+import com.example.twoscreens.firebase.RequestResult.Success
 import com.example.twoscreens.ui.base.BaseViewModel
 import com.example.twoscreens.ui.base.StateStore
 import com.example.twoscreens.ui.tasks.TaskItemDto
@@ -35,19 +35,13 @@ class FormViewModel(
 
     private suspend fun create(title: String, description: String, iconUrl: String) {
         createTask.invoke(title, description, iconUrl, response = { results ->
-            when (results) {
-                is Success -> onSuccess.postEvent(results.message)
-                is Error -> onError.postEvent(results.message)
-            }
+            if (results is Success) onSuccess.postEvent(R.string.task_created)
         })
     }
 
     private suspend fun update(title: String, description: String, iconUrl: String) {
         updateTask.invoke(stateStore.currentState.item!!.id, title, description, iconUrl, response = { results ->
-            when (results) {
-                is Success -> onSuccess.postEvent(results.message)
-                is Error -> onError.postEvent(results.message)
-            }
+            if (results is Success) onSuccess.postEvent(R.string.task_updated)
         })
     }
 

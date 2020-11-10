@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.example.twoscreens.ui.MainActivity
 import com.google.firebase.Timestamp
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
@@ -48,6 +49,16 @@ fun <EVENT : Any> Event<EVENT>.onEachEvent(fragment: Fragment, observer: (EVENT)
         launchWhenStarted = { action ->
             fragment
                 .viewLifecycleOwner
+                .lifecycleScope
+                .launchWhenStarted { action() }
+        },
+        observer = observer
+    )
+
+fun <EVENT : Any> Event<EVENT>.onEachEvent(activity: MainActivity, observer: (EVENT) -> Unit) =
+    onEachEvent(
+        launchWhenStarted = { action ->
+            activity
                 .lifecycleScope
                 .launchWhenStarted { action() }
         },

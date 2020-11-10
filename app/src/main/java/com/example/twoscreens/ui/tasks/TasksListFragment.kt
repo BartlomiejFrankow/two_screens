@@ -30,7 +30,6 @@ class TasksListFragment : Fragment(R.layout.fragment_tasks_list) {
         hideSoftKeyboard(requireActivity())
 
         model.onEachState(this, ::render)
-        model.onError.onEachEvent(this, ::showToast)
         model.onSuccessRemove.onEachEvent(this, ::showToast)
 
         list.adapter = adapter
@@ -53,10 +52,11 @@ class TasksListFragment : Fragment(R.layout.fragment_tasks_list) {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val lm = LinearLayoutManager::class.java.cast(recyclerView.layoutManager)!!
+                val isLastItemVisible = (lm.findFirstVisibleItemPosition() + lm.childCount == lm.itemCount)
 
-                if (isScrolling && (lm.findFirstVisibleItemPosition() + lm.childCount == lm.itemCount) && !model.wasLastItemReached) {
+                if (isScrolling && isLastItemVisible) {
                     isScrolling = false
-                    model.getNextTasks()
+                    model.checkIfNeedToIncreasePagination()
                 }
             }
         })
