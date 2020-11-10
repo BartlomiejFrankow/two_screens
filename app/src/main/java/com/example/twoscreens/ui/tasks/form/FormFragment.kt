@@ -35,27 +35,39 @@ class FormFragment : Fragment(R.layout.fragment_form) {
 
         iconUrl.addTextChangedListener(
             DebouncedTextWatcher(viewLifecycleOwner.lifecycleScope) { url ->
-                if (isImageUrlValid()) {
-                    iconLinkLayout.error = ""
-                    preview.setImageUrl(url)
-                }
+                setErrorAndPreview(url)
             }
         )
+    }
+
+    private fun setErrorAndPreview(url: String) {
+        when {
+            url.isEmpty() -> {
+                iconLinkLayout.error = ""
+                preview.setImageUrl(null)
+            }
+            isImageUrlValid(url) -> {
+                iconLinkLayout.error = ""
+                preview.setImageUrl(url)
+            }
+            !isImageUrlValid(url) -> {
+                iconLinkLayout.error = getString(R.string.error_invalid_url)
+            }
+        }
     }
 
     private fun areFieldsValid(): Boolean {
         val isTitleValid = !title.text.isNullOrEmpty()
         val isDescriptionValid = !description.text.isNullOrEmpty()
-        val isIconValid = iconUrl.text.isNullOrEmpty() || isImageUrlValid()
+        val isIconValid = iconUrl.text.isNullOrEmpty() || isImageUrlValid(iconUrl.text.toString())
 
         if (isTitleValid) titleLayout.error = "" else titleLayout.error = getString(R.string.error_invalid_field)
         if (isDescriptionValid) descriptionLayout.error = "" else descriptionLayout.error = getString(R.string.error_invalid_field)
-        if (isIconValid) iconLinkLayout.error = "" else iconLinkLayout.error = getString(R.string.error_invalid_url)
 
         return isTitleValid && isDescriptionValid && isIconValid
     }
 
-    private fun isImageUrlValid() = URLUtil.isValidUrl(iconUrl.text.toString())
+    private fun isImageUrlValid(url: String) = URLUtil.isValidUrl(url)
 
     private fun render(state: FormViewState) {
         submit.text = if (state.isEditMode) getString(R.string.edit) else getString(R.string.create)
@@ -63,7 +75,7 @@ class FormFragment : Fragment(R.layout.fragment_form) {
         state.item?.let { item ->
             title.setText(item.title)
             description.setText(item.description)
-            item.iconUrl?.let { url->
+            item.iconUrl?.let { url ->
                 iconUrl.setText(url)
                 preview.setImageUrl(url)
             }

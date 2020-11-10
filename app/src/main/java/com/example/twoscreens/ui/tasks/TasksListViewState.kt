@@ -1,11 +1,6 @@
 package com.example.twoscreens.ui.tasks
 
-import com.google.firebase.firestore.DocumentSnapshot
-
-data class TasksListViewState(
-    val tasks: MutableList<TaskItemDto>? = null,
-    val lastKnownDocument: DocumentSnapshot? = null
-)
+data class TasksListViewState(val tasks: List<TaskItemDto>? = null)
 
 val TasksListViewState.items
     get() = when {

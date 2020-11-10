@@ -6,6 +6,7 @@ buildscript {
     ext.junit_version = '5.7.0'
     ext.mockito_kotlin_version = "2.2.0"
     ext.nav_version = "2.3.0"
+    ext.assertj_version = '3.18.0'
 
     repositories {
         google()
