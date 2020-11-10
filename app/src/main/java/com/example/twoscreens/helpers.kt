@@ -14,7 +14,6 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
@@ -23,8 +22,6 @@ import org.threeten.bp.format.DateTimeFormatter
 interface StateEmitter<STATE> {
     fun observeState(): Flow<STATE>
 }
-
-suspend fun <STATE> StateEmitter<STATE>.currentState() = observeState().first()
 
 fun <STATE> StateEmitter<STATE>.onEachState(fragment: Fragment, consumer: (STATE) -> Unit) {
     fragment.viewLifecycleOwner.lifecycleScope.launch {
@@ -70,10 +67,11 @@ fun hideSoftKeyboard(activity: Activity) {
         .hideSoftInputFromWindow(activity.currentFocus?.windowToken, 0)
 }
 
-fun Instant.formatDate(pattern: String = "d MMMM, YYYY"): String = this.atZone(ZoneId.systemDefault())
+const val DATE_PATTERN = "d MMMM, YYYY"
+
+fun Instant.formatDate(pattern: String = DATE_PATTERN): String = this.atZone(ZoneId.systemDefault())
     .format(DateTimeFormatter.ofPattern(pattern))
 
 fun Timestamp.toMilli() = this.seconds * 1000
 
-fun Fragment.showToast(message: String) = Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
 fun Fragment.showToast(message: Int) = Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()

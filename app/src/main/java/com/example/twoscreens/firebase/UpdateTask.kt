@@ -4,7 +4,7 @@ import com.example.twoscreens.firebase.RequestResult.Success
 import com.google.firebase.firestore.FirebaseFirestore
 
 interface UpdateTask {
-    suspend fun invoke(id: String, title: String, description: String, iconUrl: String, response: (RequestResult<Unit>) -> Unit)
+    suspend operator fun invoke(id: String, title: String, description: String, iconUrl: String, response: (RequestResult<Unit>) -> Unit)
 }
 
 class UpdateTaskImpl(private val fireStore: FirebaseFirestore, private val errorExecutor: FirebaseErrorExecutor) : UpdateTask {

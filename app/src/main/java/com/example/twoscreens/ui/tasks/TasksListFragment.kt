@@ -31,6 +31,7 @@ class TasksListFragment : Fragment(R.layout.fragment_tasks_list) {
 
         model.onEachState(this, ::render)
         model.onSuccessRemove.onEachEvent(this, ::showToast)
+        model.showPaginationLoader.onEachEvent(this) { loading.isVisible = true }
 
         list.adapter = adapter
 
@@ -56,7 +57,7 @@ class TasksListFragment : Fragment(R.layout.fragment_tasks_list) {
 
                 if (isScrolling && isLastItemVisible) {
                     isScrolling = false
-                    model.checkIfNeedToIncreasePagination()
+                    model.checkIfNeedToObserveMore()
                 }
             }
         })

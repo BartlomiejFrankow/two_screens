@@ -4,25 +4,27 @@ import com.example.twoscreens.Event
 import com.example.twoscreens.R
 import com.example.twoscreens.StateEmitter
 import com.example.twoscreens.firebase.DeleteTask
+import com.example.twoscreens.firebase.ObserveTasks
 import com.example.twoscreens.firebase.PAGINATION_LIMIT_STEP
+import com.example.twoscreens.firebase.RequestResult.Error
 import com.example.twoscreens.firebase.RequestResult.Success
-import com.example.twoscreens.firebase.TasksCollection
 import com.example.twoscreens.ui.base.BaseViewModel
 import com.example.twoscreens.ui.base.StateStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class TasksListViewModel(
-    private val tasksCollection: TasksCollection,
+    private val observeTasks: ObserveTasks,
     private val deleteTask: DeleteTask,
     coroutineScope: CoroutineScope? = null
 ) : BaseViewModel(coroutineScope), StateEmitter<TasksListViewState> {
 
     val stateStore = StateStore(TasksListViewState())
 
-    private var actualPaginationSize = 0L
+    var actualPaginationSize = 0L
 
     val onSuccessRemove = Event<Int>()
+    val showPaginationLoader = Event<Unit>()
 
     init {
         runObserver()
@@ -31,19 +33,22 @@ class TasksListViewModel(
     override fun observeState() = stateStore.observe()
 
     private fun runObserver() {
+        showPaginationLoader.postEvent(Unit)
         actualPaginationSize += PAGINATION_LIMIT_STEP
 
         scope.launch {
-            tasksCollection.observe(
+            observeTasks.invoke(
                 paginationLimit = actualPaginationSize,
                 response = { results ->
-                    clearTasksList()
-                    if (results is Success) { stateStore.setState { copy(tasks = results.body) } }
+                    when (results) {
+                        is Success -> stateStore.setState { copy(tasks = results.body) }
+                        is Error -> clearTasksList()
+                    }
                 })
         }
     }
 
-    fun checkIfNeedToIncreasePagination() {
+    fun checkIfNeedToObserveMore() {
         if (stateStore.currentState.items.size >= actualPaginationSize)
             runObserver()
     }

@@ -3,7 +3,7 @@ package com.example.twoscreens.firebase
 import com.google.firebase.firestore.FirebaseFirestore
 
 interface DeleteTask {
-    suspend fun invoke(id: String, response: (RequestResult<Unit>) -> Unit)
+    suspend operator fun invoke(id: String, response: (RequestResult<Unit>) -> Unit)
 }
 
 class DeleteTaskImpl(private val fireStore: FirebaseFirestore, private val errorExecutor: FirebaseErrorExecutor) : DeleteTask {

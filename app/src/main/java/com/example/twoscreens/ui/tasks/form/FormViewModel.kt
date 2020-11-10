@@ -19,11 +19,10 @@ class FormViewModel(
     coroutineScope: CoroutineScope? = null
 ) : BaseViewModel(coroutineScope), StateEmitter<FormViewState> {
 
-    private val stateStore = StateStore(FormViewState(taskItemDto, isEditMode = taskItemDto != null))
+    val stateStore = StateStore(FormViewState(taskItemDto))
 
     override fun observeState() = stateStore.observe()
 
-    val onError = Event<String>()
     val onSuccess = Event<Int>()
 
     fun createOrUpdateTask(title: String, description: String, iconUrl: String) {
