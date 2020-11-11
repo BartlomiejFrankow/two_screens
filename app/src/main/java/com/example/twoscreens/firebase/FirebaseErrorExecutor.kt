@@ -25,7 +25,7 @@ class FirebaseErrorExecutor(private val context: Context, private val errorMessa
             UNAVAILABLE -> ErrorMessages.UNAVAILABLE.message.getString()
             DATA_LOSS -> ErrorMessages.DATA_LOSS.message.getString()
             UNAUTHENTICATED -> ErrorMessages.UNAUTHENTICATED.message.getString()
-            OK -> ErrorMessages.OK.message.getString()
+            else -> ErrorMessages.UNRECOGNIZED.message.getString()
         }
 
         errorMessage.show(message)
@@ -54,5 +54,5 @@ enum class ErrorMessages(val message: Int) {
     UNAVAILABLE(R.string.error_unavailable),
     DATA_LOSS(R.string.error_data_loss),
     UNAUTHENTICATED(R.string.error_unauthenticated),
-    OK(R.string.error_unrecognized)
+    UNRECOGNIZED(R.string.error_unrecognized)
 }

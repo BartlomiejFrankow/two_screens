@@ -12,17 +12,17 @@ import org.threeten.bp.Instant
 
 const val PAGINATION_LIMIT_STEP = 30L
 
-interface TasksCollection {
-    suspend fun observe(paginationLimit: Long, response: (RequestResult<List<TaskItemDto>>) -> Unit)
+interface ObserveTasks {
+    suspend operator fun invoke(paginationLimit: Long, response: (RequestResult<List<TaskItemDto>>) -> Unit)
 }
 
-class TasksCollectionImpl(fireStore: FirebaseFirestore, private val errorExecutor: FirebaseErrorExecutor) : TasksCollection {
+class ObserveTasksImpl(fireStore: FirebaseFirestore, private val errorExecutor: FirebaseErrorExecutor) : ObserveTasks {
 
     private val collection = fireStore.collection(TASKS_COLLECTION)
 
     private var fireStoreObserver: ListenerRegistration? = null
 
-    override suspend fun observe(paginationLimit: Long, response: (RequestResult<List<TaskItemDto>>) -> Unit) {
+    override suspend fun invoke(paginationLimit: Long, response: (RequestResult<List<TaskItemDto>>) -> Unit) {
         fireStoreObserver?.remove()
 
         fireStoreObserver = collection
@@ -31,7 +31,10 @@ class TasksCollectionImpl(fireStore: FirebaseFirestore, private val errorExecuto
             .addSnapshotListener { snapshot, error ->
                 when {
                     snapshot != null -> response(Success(snapshot.documents.mapToDto()))
-                    error != null -> errorExecutor.execute(error.code)
+                    error != null -> {
+                        response(RequestResult.Error)
+                        errorExecutor.execute(error.code)
+                    }
                 }
             }
     }

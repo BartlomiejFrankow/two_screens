@@ -11,7 +11,7 @@ const val ICON = "icon"
 const val CREATION_DATE = "creationDate"
 
 interface CreateTask {
-    suspend fun invoke(title: String, description: String, iconUrl: String, response: (RequestResult<Unit>) -> Unit)
+    suspend operator fun invoke(title: String, description: String, iconUrl: String, response: (RequestResult<Unit>) -> Unit)
 }
 
 class CreateTaskImpl(private val fireStore: FirebaseFirestore, private val errorExecutor: FirebaseErrorExecutor) : CreateTask {

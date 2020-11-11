@@ -27,6 +27,9 @@ class Event<EVENT : Any> {
         }
     }
 
-}
 
-fun Event<Unit>.postEvent() = postEvent(Unit)
+    // Use it only for the tests.
+    val lastValue: EVENT
+        get() = channel.value
+
+}

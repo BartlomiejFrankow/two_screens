@@ -22,7 +22,6 @@ class FormFragment : Fragment(R.layout.fragment_form) {
         super.onViewCreated(view, savedInstanceState)
 
         model.onEachState(this, ::render)
-        model.onError.onEachEvent(this, ::showToast)
         model.onSuccess.onEachEvent(this) { message ->
             showToast(message)
             findNavController().navigateUp()
@@ -35,12 +34,12 @@ class FormFragment : Fragment(R.layout.fragment_form) {
 
         iconUrl.addTextChangedListener(
             DebouncedTextWatcher(viewLifecycleOwner.lifecycleScope) { url ->
-                setErrorAndPreview(url)
+                setPreviewAndErrorState(url)
             }
         )
     }
 
-    private fun setErrorAndPreview(url: String) {
+    private fun setPreviewAndErrorState(url: String) {
         when {
             url.isEmpty() -> {
                 iconLinkLayout.error = ""
