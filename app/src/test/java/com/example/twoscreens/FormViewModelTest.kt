@@ -1,12 +1,13 @@
 package com.example.twoscreens
 
-import com.example.twoscreens.firebase.CreateTask
-import com.example.twoscreens.firebase.RequestResult
-import com.example.twoscreens.firebase.UpdateTask
-import com.example.twoscreens.ui.tasks.TaskItemDto
+import com.example.domain.CreateTask
+import com.example.domain.RequestResult
+import com.example.domain.UpdateTask
+import com.example.domain.dto.*
 import com.example.twoscreens.ui.tasks.form.FormViewModel
 import com.example.twoscreens.ui.tasks.form.isEditMode
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.test.TestCoroutineScope
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
@@ -15,16 +16,17 @@ import org.threeten.bp.Instant
 
 @Suppress("ClassName")
 @ExperimentalCoroutinesApi
+@FlowPreview
 class FormViewModelTest {
 
     private val createTask = object : CreateTask {
-        override suspend fun invoke(title: String, description: String, iconUrl: String, response: (RequestResult<Unit>) -> Unit) {
+        override suspend fun invoke(title: Title, description: Description, iconUrl: ImageUrl?, response: (RequestResult<Unit>) -> Unit) {
             response(RequestResult.Success(Unit))
         }
     }
 
     private val updateTask = object : UpdateTask {
-        override suspend fun invoke(id: String, title: String, description: String, iconUrl: String, response: (RequestResult<Unit>) -> Unit) {
+        override suspend fun invoke(id: TaskId, title: Title, description: Description, iconUrl: ImageUrl?, response: (RequestResult<Unit>) -> Unit) {
             response(RequestResult.Success(Unit))
         }
     }
@@ -60,7 +62,7 @@ class FormViewModelTest {
     inner class `on update task` {
 
         private val model = FormViewModel(
-            TaskItemDto("test_id_0", "title_0", "description_0", "https://test_0.jpeg", Instant.now()),
+            TaskItemDto(TaskId("test_id_0"), Title("title_0"), Description("description_0"), ImageUrl("https://test_0.jpeg"), Instant.now()),
             createTask,
             updateTask,
             TestCoroutineScope()

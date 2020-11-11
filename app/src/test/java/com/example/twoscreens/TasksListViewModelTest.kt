@@ -1,10 +1,15 @@
 package com.example.twoscreens
 
-import com.example.twoscreens.firebase.DeleteTask
-import com.example.twoscreens.firebase.ObserveTasks
-import com.example.twoscreens.firebase.RequestResult
-import com.example.twoscreens.ui.tasks.*
+import com.example.domain.DeleteTask
+import com.example.domain.ObserveTasks
+import com.example.domain.RequestResult
+import com.example.domain.dto.*
+import com.example.twoscreens.ui.tasks.TasksListViewModel
+import com.example.twoscreens.ui.tasks.hasOnlyOneListElement
+import com.example.twoscreens.ui.tasks.showEmptyInfo
+import com.example.twoscreens.ui.tasks.showLoading
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.test.TestCoroutineScope
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
@@ -13,6 +18,7 @@ import org.threeten.bp.Instant
 
 @Suppress("ClassName")
 @ExperimentalCoroutinesApi
+@FlowPreview
 class TasksListViewModelTest {
 
     private val successObserveTasks = object : ObserveTasks {
@@ -34,7 +40,7 @@ class TasksListViewModelTest {
     }
 
     private val deleteTask = object : DeleteTask {
-        override suspend fun invoke(id: String, response: (RequestResult<Unit>) -> Unit) {
+        override suspend fun invoke(id: TaskId, response: (RequestResult<Unit>) -> Unit) {
             response(RequestResult.Success(Unit))
         }
     }
@@ -120,15 +126,6 @@ class TasksListViewModelTest {
         }
 
         @Test
-        fun `on next page load show progress`() {
-            // when user will scroll to bottom of list...
-            model.checkIfNeedToObserveMore()
-
-            assertThat(model.showPaginationLoader.lastValue)
-                .isNotNull
-        }
-
-        @Test
         fun `check is progress invisible after load data`() {
 
             assertThat(model.stateStore.currentState)
@@ -147,7 +144,7 @@ class TasksListViewModelTest {
 
         @Test
         fun `on remove item show success message`() {
-            model.removeTask("test_id_0")
+            model.removeTask(TaskId("test_id_0"))
 
             assertThat(model.onSuccessRemove.lastValue)
                 .matches { value -> value == R.string.removed }
@@ -160,7 +157,15 @@ class TasksListViewModelTest {
     private fun mockTasks(size: Int): List<TaskItemDto> {
         val tasks = mutableListOf<TaskItemDto>()
         for (position in 0 until size) {
-            tasks.add(TaskItemDto("test_id_$position", "title_$position", "description_$position", "https://test_$position.jpeg", date))
+            tasks.add(
+                TaskItemDto(
+                    TaskId("test_id_$position"),
+                    Title("title_$position"),
+                    Description("description_$position"),
+                    ImageUrl("https://test_$position.jpeg"),
+                    date
+                )
+            )
         }
         return tasks.toList()
     }

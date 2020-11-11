@@ -1,4 +1,4 @@
-package com.example.twoscreens
+package com.example.twoscreens.ui.helpers
 
 import android.text.Editable
 import android.text.TextWatcher

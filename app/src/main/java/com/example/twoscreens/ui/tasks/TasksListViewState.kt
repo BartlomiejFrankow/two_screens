@@ -1,5 +1,7 @@
 package com.example.twoscreens.ui.tasks
 
+import com.example.domain.dto.TaskItemDto
+
 data class TasksListViewState(val tasks: List<TaskItemDto>? = null)
 
 val TasksListViewState.items

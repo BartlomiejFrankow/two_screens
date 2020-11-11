@@ -1,4 +1,4 @@
-package com.example.twoscreens
+package com.example.twoscreens.ui.helpers
 
 import android.app.Activity
 import android.util.Log
@@ -8,10 +8,11 @@ import android.widget.Toast
 import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.example.twoscreens.R
 import com.example.twoscreens.ui.MainActivity
-import com.google.firebase.Timestamp
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -41,6 +42,7 @@ fun ImageView.setImageUrl(url: String?) = Picasso.get()
         }
     })
 
+@FlowPreview
 fun <EVENT : Any> Event<EVENT>.onEachEvent(fragment: Fragment, observer: (EVENT) -> Unit) =
     onEachEvent(
         launchWhenStarted = { action ->
@@ -52,6 +54,7 @@ fun <EVENT : Any> Event<EVENT>.onEachEvent(fragment: Fragment, observer: (EVENT)
         observer = observer
     )
 
+@FlowPreview
 fun <EVENT : Any> Event<EVENT>.onEachEvent(activity: MainActivity, observer: (EVENT) -> Unit) =
     onEachEvent(
         launchWhenStarted = { action ->
@@ -71,7 +74,5 @@ const val DATE_PATTERN = "d MMMM, YYYY"
 
 fun Instant.formatDate(pattern: String = DATE_PATTERN): String = this.atZone(ZoneId.systemDefault())
     .format(DateTimeFormatter.ofPattern(pattern))
-
-fun Timestamp.toMilli() = this.seconds * 1000
 
 fun Fragment.showToast(message: Int) = Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()

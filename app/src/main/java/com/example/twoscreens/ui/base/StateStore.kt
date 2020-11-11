@@ -7,16 +7,15 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
+@ExperimentalCoroutinesApi
 open class StateStore<STATE : Any>(initial: STATE) {
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     private val channel = ConflatedBroadcastChannel(initial)
 
     fun setState(setter: STATE.() -> STATE) {
         setStateAndReturn(setter)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     open fun setStateAndReturn(setter: STATE.() -> STATE): STATE {
         val previous = channel.value
         val new = setter(previous)
@@ -26,8 +25,9 @@ open class StateStore<STATE : Any>(initial: STATE) {
         return new
     }
 
-    @OptIn(FlowPreview::class)
+    @FlowPreview
     fun observe() = channel.asFlow()
 
+    @FlowPreview
     val currentState get() = runBlocking { observe().first() }
 }
