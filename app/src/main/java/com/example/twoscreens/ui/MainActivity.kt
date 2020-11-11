@@ -8,10 +8,12 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.twoscreens.R
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.FlowPreview
 import org.koin.android.ext.android.get
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
+    @FlowPreview
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
