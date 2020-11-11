@@ -1,12 +1,14 @@
 package com.example.twoscreens
 
 import android.app.Application
-import com.example.twoscreens.modules.firebaseModule
-import com.example.twoscreens.modules.viewModelModule
+import com.example.network.networkModule
 import com.jakewharton.threetenabp.AndroidThreeTen
-import org.koin.android.ext.koin.androidContext
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import org.koin.core.context.startKoin
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 @Suppress("unused")
 open class App : Application() {
 
@@ -15,11 +17,10 @@ open class App : Application() {
         initAndroidThreeTen()
 
         startKoin {
-            androidContext(this@App)
             modules(
                 listOf(
                     viewModelModule,
-                    firebaseModule
+                    networkModule
                 )
             )
         }

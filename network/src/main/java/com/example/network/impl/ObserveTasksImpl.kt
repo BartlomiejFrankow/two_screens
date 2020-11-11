@@ -1,22 +1,17 @@
-package com.example.twoscreens.firebase
+package com.example.network.impl
 
-import com.example.twoscreens.firebase.RequestResult.Success
-import com.example.twoscreens.toMilli
-import com.example.twoscreens.ui.tasks.TaskItemDto
+import com.example.domain.*
+import com.example.domain.dto.*
+import com.example.network.ErrorExecutor
+import com.example.network.toMilli
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.Query.Direction.DESCENDING
+import com.google.firebase.firestore.Query
 import org.threeten.bp.Instant
 
-const val PAGINATION_LIMIT_STEP = 30L
-
-interface ObserveTasks {
-    suspend operator fun invoke(paginationLimit: Long, response: (RequestResult<List<TaskItemDto>>) -> Unit)
-}
-
-class ObserveTasksImpl(fireStore: FirebaseFirestore, private val errorExecutor: FirebaseErrorExecutor) : ObserveTasks {
+class ObserveTasksImpl(fireStore: FirebaseFirestore, private val errorExecutor: ErrorExecutor) : ObserveTasks {
 
     private val collection = fireStore.collection(TASKS_COLLECTION)
 
@@ -26,11 +21,11 @@ class ObserveTasksImpl(fireStore: FirebaseFirestore, private val errorExecutor: 
         fireStoreObserver?.remove()
 
         fireStoreObserver = collection
-            .orderBy(CREATION_DATE, DESCENDING)
+            .orderBy(CREATION_DATE, Query.Direction.DESCENDING)
             .limit(paginationLimit)
             .addSnapshotListener { snapshot, error ->
                 when {
-                    snapshot != null -> response(Success(snapshot.documents.mapToDto()))
+                    snapshot != null -> response(RequestResult.Success(snapshot.documents.mapToDto()))
                     error != null -> {
                         response(RequestResult.Error)
                         errorExecutor.execute(error.code)
@@ -44,10 +39,10 @@ class ObserveTasksImpl(fireStore: FirebaseFirestore, private val errorExecutor: 
 private fun List<DocumentSnapshot>.mapToDto(): List<TaskItemDto> {
     return this.map { document ->
         TaskItemDto(
-            id = document.id,
-            title = (document.data!![TITLE] as String),
-            description = (document.data!![DESCRIPTION] as String),
-            iconUrl = if (document.data!![ICON] != null) document.data!![ICON] as String else null,
+            id = TaskId(document.id),
+            title = Title(document.data!![TITLE] as String),
+            description = Description(document.data!![DESCRIPTION] as String),
+            iconUrl = if (document.data!![ICON] != null) ImageUrl(document.data!![ICON] as String) else null,
             creationDate = Instant.ofEpochMilli((document.data!![CREATION_DATE] as Timestamp).toMilli())
         )
     }

@@ -1,6 +1,6 @@
 package com.example.twoscreens.ui.tasks.form
 
-import com.example.twoscreens.ui.tasks.TaskItemDto
+import com.example.domain.dto.TaskItemDto
 
 data class FormViewState(var item: TaskItemDto?)
 

@@ -1,4 +1,4 @@
-package com.example.twoscreens.firebase
+package com.example.domain
 
 sealed class RequestResult<out BODY> {
     object Error : RequestResult<Nothing>()

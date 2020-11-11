@@ -1,19 +1,27 @@
 package com.example.twoscreens.ui
 
 import android.graphics.Color
-import com.example.twoscreens.Event
-import com.example.twoscreens.firebase.ErrorMessage
-import com.example.twoscreens.onEachEvent
+import com.example.domain.ErrorMessage
+import com.example.twoscreens.ui.helpers.Event
+import com.example.twoscreens.ui.helpers.onEachEvent
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 
 class SnackBarError : ErrorMessage {
 
-    private val errorMessage = Event<String>()
+    private val errorStringMessage = Event<String>()
+    private val errorResMessage = Event<Int>()
 
-    fun registerActivity(owner: MainActivity) =
-        errorMessage.onEachEvent(owner) { message ->
+    @FlowPreview
+    fun registerActivity(owner: MainActivity) {
+        errorStringMessage.onEachEvent(owner) { message ->
             showSnackBar(owner, message)
         }
+        errorResMessage.onEachEvent(owner) { resource ->
+            showSnackBar(owner, owner.getString(resource))
+        }
+    }
 
     private fun showSnackBar(activity: MainActivity, text: String) {
         Snackbar.make(
@@ -27,5 +35,8 @@ class SnackBarError : ErrorMessage {
             .show()
     }
 
-    override fun show(message: String) = errorMessage.postEvent(message)
+    @ExperimentalCoroutinesApi
+    override fun show(message: String?) = errorStringMessage.postEvent(message ?: "Unrecognized error")
+    @ExperimentalCoroutinesApi
+    override fun show(resource: Int) = errorResMessage.postEvent(resource)
 }

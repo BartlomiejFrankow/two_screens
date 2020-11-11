@@ -7,13 +7,18 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.example.domain.dto.TaskItemDto
 import com.example.twoscreens.*
-import com.example.twoscreens.ui.tasks.TaskItemDto
+import com.example.twoscreens.ui.helpers.*
 import com.example.twoscreens.ui.tasks.TasksListFragment
 import kotlinx.android.synthetic.main.fragment_form.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 class FormFragment : Fragment(R.layout.fragment_form) {
 
     private val model: FormViewModel by viewModel { parametersOf(item) }
@@ -72,11 +77,11 @@ class FormFragment : Fragment(R.layout.fragment_form) {
         submit.text = if (state.isEditMode) getString(R.string.edit) else getString(R.string.create)
 
         state.item?.let { item ->
-            title.setText(item.title)
-            description.setText(item.description)
-            item.iconUrl?.let { url ->
-                iconUrl.setText(url)
-                preview.setImageUrl(url)
+            title.setText(item.title.value)
+            description.setText(item.description.value)
+            item.iconUrl?.let { imageUrl ->
+                iconUrl.setText(imageUrl.value)
+                preview.setImageUrl(imageUrl.value)
             }
         }
     }

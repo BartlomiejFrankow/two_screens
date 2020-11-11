@@ -5,12 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.domain.dto.TaskItemDto
 import com.example.twoscreens.R
-import com.example.twoscreens.formatDate
-import com.example.twoscreens.setImageUrl
+import com.example.twoscreens.ui.helpers.formatDate
+import com.example.twoscreens.ui.helpers.setImageUrl
 import kotlinx.android.synthetic.main.item_to_do.view.*
-import org.threeten.bp.Instant
-import java.io.Serializable
 
 class TodoListAdapter(val onLongClick: (TaskItemDto) -> Unit, val onClick: (TaskItemDto) -> Unit) :
     ListAdapter<TaskItemDto, RecyclerView.ViewHolder>(TodoItemCallBack()) {
@@ -24,9 +23,9 @@ class TodoListAdapter(val onLongClick: (TaskItemDto) -> Unit, val onClick: (Task
         with(holder.itemView) {
             val item = getItem(position)
 
-            title.text = item.title
-            description.text = item.description
-            icon.setImageUrl(item.iconUrl)
+            title.text = item.title.value
+            description.text = item.description.value
+            icon.setImageUrl(item.iconUrl?.value)
             date.text = item.creationDate.formatDate()
 
             setOnClickListener {
@@ -39,8 +38,6 @@ class TodoListAdapter(val onLongClick: (TaskItemDto) -> Unit, val onClick: (Task
         }
     }
 }
-
-data class TaskItemDto(val id: String, val title: String, val description: String, val iconUrl: String?, val creationDate: Instant) : Serializable
 
 internal class TodoItemCallBack : DiffUtil.ItemCallback<TaskItemDto>() {
     override fun areItemsTheSame(oldItemDto: TaskItemDto, newItemDto: TaskItemDto) = oldItemDto == newItemDto

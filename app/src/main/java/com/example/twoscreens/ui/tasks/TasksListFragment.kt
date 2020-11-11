@@ -8,11 +8,20 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.twoscreens.*
+import com.example.domain.dto.TaskId
+import com.example.twoscreens.R
+import com.example.twoscreens.ui.helpers.hideSoftKeyboard
+import com.example.twoscreens.ui.helpers.onEachEvent
+import com.example.twoscreens.ui.helpers.onEachState
+import com.example.twoscreens.ui.helpers.showToast
 import com.example.twoscreens.ui.tasks.form.FormFragment
 import kotlinx.android.synthetic.main.fragment_tasks_list.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+@ExperimentalCoroutinesApi
+@FlowPreview
 class TasksListFragment : Fragment(R.layout.fragment_tasks_list) {
 
     private val model: TasksListViewModel by viewModel()
@@ -31,7 +40,6 @@ class TasksListFragment : Fragment(R.layout.fragment_tasks_list) {
 
         model.onEachState(this, ::render)
         model.onSuccessRemove.onEachEvent(this, ::showToast)
-        model.showPaginationLoader.onEachEvent(this) { loading.isVisible = true }
 
         list.adapter = adapter
 
@@ -69,7 +77,7 @@ class TasksListFragment : Fragment(R.layout.fragment_tasks_list) {
         adapter.submitList(state.items)
     }
 
-    private fun askForDelete(id: String) {
+    private fun askForDelete(id: TaskId) {
         AlertDialog.Builder(context)
             .setMessage(R.string.delete)
             .setPositiveButton(R.string.yes) { dialog, _ ->
