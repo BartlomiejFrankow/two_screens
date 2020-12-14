@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.domain.dto.TaskItemDto
-import com.example.twoscreens.*
+import com.example.twoscreens.R
 import com.example.twoscreens.ui.helpers.*
 import com.example.twoscreens.ui.tasks.TasksListFragment
 import kotlinx.android.synthetic.main.fragment_form.*
@@ -90,9 +90,6 @@ class FormFragment : Fragment(R.layout.fragment_form) {
         private const val TODO_ITEM = "TODO_ITEM"
         private val FormFragment.item get() = requireArguments().getSerializable(TODO_ITEM)?.let { it as TaskItemDto }
 
-        // TODO if will have some additional time...
-        // I decide to move whole TaskItemDto because it's small. But if I will have more time then instead of moving whole dto I could create local db
-        // and store tasks list to move only id between fragments. At Form fragment I could take this id and get object from local db.
         fun navigate(fragment: TasksListFragment, item: TaskItemDto? = null) {
             fragment.findNavController().navigate(R.id.action_todoList_to_form, bundleOf(TODO_ITEM to item))
         }
