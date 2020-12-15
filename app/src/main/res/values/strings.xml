@@ -16,7 +16,7 @@
     <string name="removed">Task successfully removed</string>
     <string name="close">Close</string>
 
-    // ui errors
+    // errors
     <string name="error_invalid_field">This field cannot be empty</string>
     <string name="error_invalid_url">This image url is invalid</string>
 
