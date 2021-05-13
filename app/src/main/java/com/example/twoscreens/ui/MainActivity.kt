@@ -1,6 +1,7 @@
 package com.example.twoscreens.ui
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -19,6 +20,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
         setGraph()
         get<SnackBarError>().registerActivity(this)
+
+        Toast.makeText(applicationContext, "Bitrise build test", Toast.LENGTH_LONG).show()
     }
 
     private fun setGraph() {
