@@ -18,7 +18,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         super.onCreate(savedInstanceState)
 
         setGraph()
-
         get<SnackBarError>().registerActivity(this)
     }
 
