@@ -1,9 +1,10 @@
-package com.example.twoscreens
+package com.example.twoscreens.functionalities
 
 import com.example.domain.CreateTask
 import com.example.domain.RequestResult
 import com.example.domain.UpdateTask
 import com.example.domain.dto.*
+import com.example.twoscreens.R
 import com.example.twoscreens.ui.tasks.form.FormViewModel
 import com.example.twoscreens.ui.tasks.form.isEditMode
 import kotlinx.coroutines.ExperimentalCoroutinesApi

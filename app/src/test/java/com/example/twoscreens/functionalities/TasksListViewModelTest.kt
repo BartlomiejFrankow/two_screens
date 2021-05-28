@@ -1,9 +1,10 @@
-package com.example.twoscreens
+package com.example.twoscreens.functionalities
 
 import com.example.domain.DeleteTask
 import com.example.domain.ObserveTasks
 import com.example.domain.RequestResult
 import com.example.domain.dto.*
+import com.example.twoscreens.R
 import com.example.twoscreens.ui.tasks.TasksListViewModel
 import com.example.twoscreens.ui.tasks.hasOnlyOneListElement
 import com.example.twoscreens.ui.tasks.showEmptyInfo

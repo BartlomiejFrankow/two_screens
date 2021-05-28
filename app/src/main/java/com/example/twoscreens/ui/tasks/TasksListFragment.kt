@@ -2,7 +2,9 @@ package com.example.twoscreens.ui.tasks
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AbsListView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -10,12 +12,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.domain.dto.TaskId
 import com.example.twoscreens.R
+import com.example.twoscreens.databinding.FragmentTasksListBinding
 import com.example.twoscreens.ui.helpers.hideSoftKeyboard
 import com.example.twoscreens.ui.helpers.onEachEvent
 import com.example.twoscreens.ui.helpers.onEachState
 import com.example.twoscreens.ui.helpers.showToast
 import com.example.twoscreens.ui.tasks.form.FormFragment
-import kotlinx.android.synthetic.main.fragment_tasks_list.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -23,6 +25,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 @ExperimentalCoroutinesApi
 @FlowPreview
 class TasksListFragment : Fragment(R.layout.fragment_tasks_list) {
+
+    private lateinit var binding: FragmentTasksListBinding
 
     private val model: TasksListViewModel by viewModel()
 
@@ -33,6 +37,11 @@ class TasksListFragment : Fragment(R.layout.fragment_tasks_list) {
         onLongClick = { dto -> askForDelete(dto.id) }
     )
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentTasksListBinding.inflate(layoutInflater)
+        return binding.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -41,9 +50,9 @@ class TasksListFragment : Fragment(R.layout.fragment_tasks_list) {
         model.onEachState(this, ::render)
         model.onSuccessRemove.onEachEvent(this, ::showToast)
 
-        list.adapter = adapter
+        binding.list.adapter = adapter
 
-        addNew.setOnClickListener {
+        binding.addNew.setOnClickListener {
             FormFragment.navigate(this)
         }
 
@@ -51,7 +60,7 @@ class TasksListFragment : Fragment(R.layout.fragment_tasks_list) {
     }
 
     private fun paginationListener() {
-        list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding.list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
@@ -72,8 +81,8 @@ class TasksListFragment : Fragment(R.layout.fragment_tasks_list) {
     }
 
     private fun render(state: TasksListViewState) {
-        emptyView.isVisible = state.showEmptyInfo
-        loading.isVisible = state.showLoading
+        binding.emptyView.isVisible = state.showEmptyInfo
+        binding.loading.isVisible = state.showLoading
         adapter.submitList(state.items)
     }
 
