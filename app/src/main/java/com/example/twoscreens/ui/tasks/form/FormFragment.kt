@@ -1,17 +1,19 @@
 package com.example.twoscreens.ui.tasks.form
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.webkit.URLUtil
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.domain.dto.TaskItemDto
-import com.example.twoscreens.*
+import com.example.twoscreens.R
+import com.example.twoscreens.databinding.FragmentFormBinding
 import com.example.twoscreens.ui.helpers.*
 import com.example.twoscreens.ui.tasks.TasksListFragment
-import kotlinx.android.synthetic.main.fragment_form.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -21,7 +23,14 @@ import org.koin.core.parameter.parametersOf
 @ExperimentalCoroutinesApi
 class FormFragment : Fragment(R.layout.fragment_form) {
 
+    private lateinit var binding: FragmentFormBinding
+
     private val model: FormViewModel by viewModel { parametersOf(item) }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentFormBinding.inflate(layoutInflater)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -32,12 +41,12 @@ class FormFragment : Fragment(R.layout.fragment_form) {
             findNavController().navigateUp()
         }
 
-        submit.setOnClickListener {
+        binding.submit.setOnClickListener {
             if (areFieldsValid())
-                model.createOrUpdateTask(title.text.toString(), description.text.toString(), iconUrl.text.toString())
+                model.createOrUpdateTask(binding.title.text.toString(), binding.description.text.toString(), binding.iconUrl.text.toString())
         }
 
-        iconUrl.addTextChangedListener(
+        binding.iconUrl.addTextChangedListener(
             DebouncedTextWatcher(viewLifecycleOwner.lifecycleScope) { url ->
                 setPreviewAndErrorState(url)
             }
@@ -47,26 +56,26 @@ class FormFragment : Fragment(R.layout.fragment_form) {
     private fun setPreviewAndErrorState(url: String) {
         when {
             url.isEmpty() -> {
-                iconLinkLayout.error = ""
-                preview.setImageUrl(null)
+                binding.iconLinkLayout.error = ""
+                binding.preview.setImageUrl(null)
             }
             isImageUrlValid(url) -> {
-                iconLinkLayout.error = ""
-                preview.setImageUrl(url)
+                binding.iconLinkLayout.error = ""
+                binding.preview.setImageUrl(url)
             }
             !isImageUrlValid(url) -> {
-                iconLinkLayout.error = getString(R.string.error_invalid_url)
+                binding.iconLinkLayout.error = getString(R.string.error_invalid_url)
             }
         }
     }
 
     private fun areFieldsValid(): Boolean {
-        val isTitleValid = !title.text.isNullOrEmpty()
-        val isDescriptionValid = !description.text.isNullOrEmpty()
-        val isIconValid = iconUrl.text.isNullOrEmpty() || isImageUrlValid(iconUrl.text.toString())
+        val isTitleValid = !binding.title.text.isNullOrEmpty()
+        val isDescriptionValid = !binding.description.text.isNullOrEmpty()
+        val isIconValid = binding.iconUrl.text.isNullOrEmpty() || isImageUrlValid(binding.iconUrl.text.toString())
 
-        if (isTitleValid) titleLayout.error = "" else titleLayout.error = getString(R.string.error_invalid_field)
-        if (isDescriptionValid) descriptionLayout.error = "" else descriptionLayout.error = getString(R.string.error_invalid_field)
+        if (isTitleValid) binding.titleLayout.error = "" else binding.titleLayout.error = getString(R.string.error_invalid_field)
+        if (isDescriptionValid) binding.descriptionLayout.error = "" else binding.descriptionLayout.error = getString(R.string.error_invalid_field)
 
         return isTitleValid && isDescriptionValid && isIconValid
     }
@@ -74,14 +83,14 @@ class FormFragment : Fragment(R.layout.fragment_form) {
     private fun isImageUrlValid(url: String) = URLUtil.isValidUrl(url)
 
     private fun render(state: FormViewState) {
-        submit.text = if (state.isEditMode) getString(R.string.edit) else getString(R.string.create)
+        binding.submit.text = if (state.isEditMode) getString(R.string.edit) else getString(R.string.create)
 
         state.item?.let { item ->
-            title.setText(item.title.value)
-            description.setText(item.description.value)
+            binding.title.setText(item.title.value)
+            binding.description.setText(item.description.value)
             item.iconUrl?.let { imageUrl ->
-                iconUrl.setText(imageUrl.value)
-                preview.setImageUrl(imageUrl.value)
+                binding.iconUrl.setText(imageUrl.value)
+                binding.preview.setImageUrl(imageUrl.value)
             }
         }
     }
